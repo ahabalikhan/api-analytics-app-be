@@ -23,8 +23,11 @@ namespace ApiAnalyticsApp.Services.ConsumerApplication
         public async Task<CreateConsumerApplicationResponseDto> CreateConsumerApplication(CreateConsumerApplicationRequestDto request)
         {
 
-            if (request.NodeNames.Count < 2 || request.NodeNames.Any(name => string.IsNullOrEmpty(name)))
-                CustomError.InvalidRequest.ThrowCustomErrorException(HttpStatusCode.BadRequest, description: "Nodes names should be non-empty and more than two");
+            if (request.NodeNames.Count < 2)
+                CustomError.InvalidRequest.ThrowCustomErrorException(HttpStatusCode.BadRequest, description: "Minimum two nodes are required");
+
+            if (request.NodeNames.Any(name => string.IsNullOrEmpty(name)))
+                CustomError.InvalidRequest.ThrowCustomErrorException(HttpStatusCode.BadRequest, description: "Nodes names should be non-empty");
 
             Guid applicationKey = Guid.NewGuid();
             Guid secretKey = Guid.NewGuid();

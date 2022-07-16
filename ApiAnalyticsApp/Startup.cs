@@ -76,8 +76,10 @@ namespace ApiAnalyticsApp
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.ConfigureExceptionHandler();
+            else
+            {
+                app.ConfigureExceptionHandler();
+            }
 
             app.UseHttpsRedirection();
 
