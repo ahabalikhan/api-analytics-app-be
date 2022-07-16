@@ -15,11 +15,5 @@ namespace ApiAnalyticsApp.Services.Node
         {
             this.nodeRepository = nodeRepository;
         }
-
-        public async Task TestAsync()
-        {
-            nodeRepository.Insert(new DataAccess.Models.Node { ConsumerApplicationId = 0 });
-            await nodeRepository.SaveAsync();
-        }
     }
 }

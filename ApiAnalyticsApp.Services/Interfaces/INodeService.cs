@@ -7,6 +7,5 @@ namespace ApiAnalyticsApp.Services.Interfaces
 {
     public interface INodeService
     {
-        Task TestAsync();
     }
 }
