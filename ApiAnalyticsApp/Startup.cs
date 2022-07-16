@@ -14,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using ApiAnalyticsApp.DataAccess;
 using Autofac;
+using ApiAnalyticsApp.Middlewares;
 
 namespace ApiAnalyticsApp
 {
@@ -30,7 +31,10 @@ namespace ApiAnalyticsApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApiAnalyticsAppDbContext>(op => op.UseSqlServer(Configuration.GetConnectionString("Database")));
-            services.AddControllers();
+            services.AddApiVersioning();
+            object p = services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                );
 
             services.AddSwaggerGen(c =>
             {
@@ -72,6 +76,8 @@ namespace ApiAnalyticsApp
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.ConfigureExceptionHandler();
 
             app.UseHttpsRedirection();
 
