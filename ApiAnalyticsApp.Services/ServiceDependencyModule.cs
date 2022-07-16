@@ -1,4 +1,5 @@
 ﻿using ApiAnalyticsApp.DataAccess.Helpers;
+using ApiAnalyticsApp.Services.ConsumerApplication;
 using ApiAnalyticsApp.Services.Interfaces;
 using ApiAnalyticsApp.Services.Node;
 using Autofac;
@@ -20,6 +21,7 @@ namespace ApiAnalyticsApp.Services
             builder.RegisterGeneric(typeof(AuditableRepository<>)).WithParameter("enableSoftDelete", true).AsSelf().InstancePerLifetimeScope();
 
             builder.RegisterType<NodeService>().As<INodeService>().InstancePerLifetimeScope();
+            builder.RegisterType<ConsumerApplicationService>().As<IConsumerApplicationService>().InstancePerLifetimeScope();
         }
     }
 }
