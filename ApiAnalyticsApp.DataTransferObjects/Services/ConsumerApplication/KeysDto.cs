@@ -4,9 +4,9 @@ using System.Text;
 
 namespace ApiAnalyticsApp.DataTransferObjects.Services.ConsumerApplication
 {
-    public class CreateConsumerApplicationResponseDto
+    public class KeysDto
     {
-        public Guid ApplicationKey { get; set; }
-        public Guid SecretKey { get; set; }
+        public string ApplicationKey { get; set; }
+        public string SecretKey { get; set; }
     }
 }

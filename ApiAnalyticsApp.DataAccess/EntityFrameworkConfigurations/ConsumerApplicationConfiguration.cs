@@ -16,6 +16,12 @@ namespace ApiAnalyticsApp.DataAccess.EntityFrameworkConfigurations
                 .WithOne(n => n.ConsumerApplication)
                 .HasPrincipalKey(ca => ca.Id)
                 .HasForeignKey(n => n.ConsumerApplicationId);
+
+            builder
+                .HasMany(ca => ca.PortalSessions)
+                .WithOne(ps => ps.ConsumerApplication)
+                .HasPrincipalKey(ca => ca.Id)
+                .HasForeignKey(ps => ps.ConsumerApplicationId);
         }
     }
 }

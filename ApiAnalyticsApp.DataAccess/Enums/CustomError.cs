@@ -8,6 +8,9 @@ namespace ApiAnalyticsApp.DataAccess.Enums
     public enum CustomError
     {
         [Description("Invalid Request")]
-        InvalidRequest = 10
+        InvalidRequest = 10,
+
+        [Description("Entity Not Found")]
+        NotFound = 20
     }
 }
