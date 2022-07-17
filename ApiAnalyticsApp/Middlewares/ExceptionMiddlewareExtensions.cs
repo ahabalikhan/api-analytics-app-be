@@ -34,13 +34,12 @@ namespace ApiAnalyticsApp.Middlewares
                         context.Response.StatusCode = (int)exception.StatusCode;
                         customException = exception;
                     }
-                    if (contextFeature != null)
+                    
+                    await context.Response.WriteAsync(JsonConvert.SerializeObject(customException.AsFailure(), new JsonSerializerSettings
                     {
-                        await context.Response.WriteAsync(JsonConvert.SerializeObject(customException.AsFailure(), new JsonSerializerSettings
-                        {
-                            ContractResolver = new CamelCasePropertyNamesContractResolver()
-                        }));
-                    }
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    }));
+                    
                 });
             });
         }
