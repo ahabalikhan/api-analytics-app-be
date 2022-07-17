@@ -25,6 +25,7 @@ namespace ApiAnalyticsApp.DataAccess
             modelBuilder.Entity<Node>().ToTable("tbl_Node").HasKey(m => m.Id);
             modelBuilder.Entity<NodeTransition>().ToTable("tbl_NodeTransition").HasKey(m => m.Id);
             modelBuilder.Entity<PredictionLog>().ToTable("tbl_PredictionLog").HasKey(m => m.Id);
+            modelBuilder.Entity<PortalSession>().ToTable("tbl_PortalSession").HasKey(m => m.Id);
         }
     }
 }

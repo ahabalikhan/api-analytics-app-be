@@ -20,8 +20,9 @@ namespace ApiAnalyticsApp.Controllers
         {
             this.consumerApplicationService = consumerApplicationService;
         }
+
         [HttpPost]
-        public async Task<HttpResponseModel<CreateConsumerApplicationResponseDto>> CreateConsumerApplication(CreateConsumerApplicationRequestDto request)
+        public async Task<HttpResponseModel<KeysDto>> CreateConsumerApplication(CreateConsumerApplicationRequestDto request)
         {
             var response = await consumerApplicationService.CreateConsumerApplication(request);
             return response.AsSuccess();

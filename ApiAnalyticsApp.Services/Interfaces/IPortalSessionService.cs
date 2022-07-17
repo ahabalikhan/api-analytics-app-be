@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace ApiAnalyticsApp.Services.Interfaces
 {
-    public interface IConsumerApplicationService
+    public interface IPortalSessionService
     {
-        Task<KeysDto> CreateConsumerApplication(CreateConsumerApplicationRequestDto request);
+        Task<string> GetToken(KeysDto request);
     }
 }

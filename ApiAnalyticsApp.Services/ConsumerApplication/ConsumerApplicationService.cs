@@ -20,7 +20,7 @@ namespace ApiAnalyticsApp.Services.ConsumerApplication
         {
             this.consumerApplicationRepository = consumerApplicationRepository;
         }
-        public async Task<CreateConsumerApplicationResponseDto> CreateConsumerApplication(CreateConsumerApplicationRequestDto request)
+        public async Task<KeysDto> CreateConsumerApplication(CreateConsumerApplicationRequestDto request)
         {
 
             if (request.NodeNames.Count < 2)
@@ -29,8 +29,8 @@ namespace ApiAnalyticsApp.Services.ConsumerApplication
             if (request.NodeNames.Any(name => string.IsNullOrEmpty(name)))
                 CustomError.InvalidRequest.ThrowCustomErrorException(HttpStatusCode.BadRequest, description: "Nodes names should be non-empty");
 
-            Guid applicationKey = Guid.NewGuid();
-            Guid secretKey = Guid.NewGuid();
+            string applicationKey = Guid.NewGuid().ToString();
+            string secretKey = Guid.NewGuid().ToString();
 
             var consumerApplication = new ConsumerApplication
             {
@@ -42,7 +42,7 @@ namespace ApiAnalyticsApp.Services.ConsumerApplication
             consumerApplicationRepository.Insert(consumerApplication);
             await consumerApplicationRepository.SaveAsync();
 
-            var response = new CreateConsumerApplicationResponseDto
+            var response = new KeysDto
             {
                 ApplicationKey = applicationKey,
                 SecretKey = secretKey

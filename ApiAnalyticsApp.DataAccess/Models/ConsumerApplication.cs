@@ -7,9 +7,10 @@ namespace ApiAnalyticsApp.DataAccess.Models
 {
     public class ConsumerApplication : BaseEntity
     {
-        public Guid ApplicationKey { get; set; }
-        public Guid SecretKey { get; set; }
+        public string ApplicationKey { get; set; }
+        public string SecretKey { get; set; }
 
         public List<Node> Nodes { get; set; }
+        public List<PortalSession> PortalSessions { get; set; }
     }
 }
