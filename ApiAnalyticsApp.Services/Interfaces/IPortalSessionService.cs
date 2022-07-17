@@ -10,6 +10,6 @@ namespace ApiAnalyticsApp.Services.Interfaces
     public interface IPortalSessionService
     {
         Task<string> GetToken(KeysDto request);
-        ConsumerApplication GetConsumerApplication(string token);
+        int GetConsumerApplicationId(string token);
     }
 }

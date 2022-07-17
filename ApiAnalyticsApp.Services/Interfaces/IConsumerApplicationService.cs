@@ -9,5 +9,8 @@ namespace ApiAnalyticsApp.Services.Interfaces
     public interface IConsumerApplicationService
     {
         Task<KeysDto> CreateConsumerApplication(CreateConsumerApplicationRequestDto request);
+        Task<CountPercentageDto> GetTodaysRequestsAsync(string token);
+        Task<CountPercentageDto> GetThisMonthRequestsAsync(string token);
+        Task<CountPercentageDto> GetTotalRequestsAsync(string token);
     }
 }

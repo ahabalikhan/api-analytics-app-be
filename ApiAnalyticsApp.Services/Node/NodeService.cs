@@ -3,6 +3,7 @@ using ApiAnalyticsApp.DataAccess.Helpers;
 using ApiAnalyticsApp.DataAccess.Models;
 using ApiAnalyticsApp.DataTransferObjects.Services.Node;
 using ApiAnalyticsApp.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,11 +22,11 @@ namespace ApiAnalyticsApp.Services.Node
             this.nodeRepository = nodeRepository;
             this.nodeTransitionRepository = nodeTransitionRepository;
         }
-        public async Task<int> GetNextNode(int consumerApplicationId, NodeTransitionDto request)
+        public async Task<int> GetNextNode(NodeTransitionDto request)
         {
-            var transitionNodes = nodeRepository.GetAll().Where(n => new int[] { request.FromNodeId, request.ToNodeId }.Contains(n.Id)).ToList();
+            var transitionNodes = nodeRepository.GetAll().Include(n => n.ConsumerApplication).Where(n => new int[] { request.FromNodeId, request.ToNodeId }.Contains(n.Id)).ToList();
 
-            if (transitionNodes.Any(node => node.ConsumerApplicationId != consumerApplicationId))
+            if (transitionNodes.Any(node => node.ConsumerApplication.ApplicationKey != request.ApplicationKey))
                 CustomError.InvalidRequest.ThrowCustomErrorException(HttpStatusCode.BadRequest, "Invalid Node Ids");
 
             var newTransition = new NodeTransition

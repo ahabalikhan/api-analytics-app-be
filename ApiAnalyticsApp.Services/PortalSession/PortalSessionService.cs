@@ -2,6 +2,7 @@
 using ApiAnalyticsApp.DataAccess.Helpers;
 using ApiAnalyticsApp.DataTransferObjects.Services.ConsumerApplication;
 using ApiAnalyticsApp.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -53,16 +54,16 @@ namespace ApiAnalyticsApp.Services.PortalSession
             return token;
         }
 
-        public ConsumerApplication GetConsumerApplication(string token)
+        public int GetConsumerApplicationId(string token)
         {
             var session = portalSessionRepository.GetAll().Where(ps => ps.Token == token && ps.ExpiryDate > DateTime.UtcNow).FirstOrDefault();
             
             if (session == null)
                 CustomError.InvalidToken.ThrowCustomErrorException(HttpStatusCode.Unauthorized);
 
-            var consumerApplication = consumerApplicationRepository.GetAll().Where(ca => ca.Id == session.ConsumerApplicationId).FirstOrDefault();
+            //var consumerApplication = consumerApplicationRepository.GetAll().Where(ca => ca.Id == session.ConsumerApplicationId).FirstOrDefault();
 
-            return consumerApplication;
+            return session.ConsumerApplicationId;
         }
     }
 }

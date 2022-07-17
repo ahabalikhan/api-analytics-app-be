@@ -1,7 +1,9 @@
 ﻿using ApiAnalyticsApp.DataAccess.Enums;
 using ApiAnalyticsApp.DataAccess.Helpers;
+using ApiAnalyticsApp.DataAccess.Models;
 using ApiAnalyticsApp.DataTransferObjects.Services.ConsumerApplication;
 using ApiAnalyticsApp.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +18,16 @@ namespace ApiAnalyticsApp.Services.ConsumerApplication
     public class ConsumerApplicationService : IConsumerApplicationService
     {
         private readonly AuditableRepository<ConsumerApplication> consumerApplicationRepository;
-        public ConsumerApplicationService(AuditableRepository<ConsumerApplication> consumerApplicationRepository)
+        private readonly IPortalSessionService portalSessionService;
+        private readonly AuditableRepository<NodeTransition> nodeTransitionRepository;
+        public ConsumerApplicationService(
+            AuditableRepository<ConsumerApplication> consumerApplicationRepository, 
+            IPortalSessionService portalSessionService,
+            AuditableRepository<NodeTransition> nodeTransitionRepository)
         {
             this.consumerApplicationRepository = consumerApplicationRepository;
+            this.portalSessionService = portalSessionService;
+            this.nodeTransitionRepository = nodeTransitionRepository;
         }
         public async Task<KeysDto> CreateConsumerApplication(CreateConsumerApplicationRequestDto request)
         {
@@ -46,6 +55,104 @@ namespace ApiAnalyticsApp.Services.ConsumerApplication
             {
                 ApplicationKey = applicationKey,
                 SecretKey = secretKey
+            };
+
+            return response;
+        }
+        
+        public async Task<CountPercentageDto> GetTodaysRequestsAsync(string token)
+        {
+            var appId = portalSessionService.GetConsumerApplicationId(token);
+
+            var app = await consumerApplicationRepository.GetAll().Where(ca => ca.Id == appId).Include(ca => ca.Nodes).FirstOrDefaultAsync();
+
+            var nodeIds = app.Nodes.Select(n => n.Id).ToList();
+
+            DateTime startDateTime = DateTime.Today.AddDays(-1);
+            DateTime endDateTime = DateTime.Today.AddDays(1).AddTicks(-1);
+
+            var a = await nodeTransitionRepository.GetAll().OrderByDescending(nt => nt.OccurredOn)
+                .Where(nt => (nodeIds.Contains(nt.NodeFromId) || nodeIds.Contains(nt.NodeToId)) && nt.OccurredOn > startDateTime && nt.OccurredOn < endDateTime)
+                .ToListAsync();
+
+            var counts = a.GroupBy(nt => nt.OccurredOn.DayOfWeek).Take(2).Select(g => g.Count()).ToList();
+
+            var todayCount = (decimal)counts.FirstOrDefault();
+            var yesterdayCount = (decimal)counts.LastOrDefault();
+
+            decimal percentage = 0;
+
+            if (yesterdayCount == 0)
+            {
+                if (todayCount != 0)
+                    percentage = 100;
+            }
+            else
+                percentage = ((todayCount - yesterdayCount) / yesterdayCount) * 100;
+
+            var response = new CountPercentageDto
+            {
+                Count = (int)todayCount,
+                Percentage = percentage
+            };
+
+            return response;
+        }
+
+        public async Task<CountPercentageDto> GetThisMonthRequestsAsync(string token)
+        {
+            var appId = portalSessionService.GetConsumerApplicationId(token);
+
+            var app = await consumerApplicationRepository.GetAll().Where(ca => ca.Id == appId).Include(ca => ca.Nodes).FirstOrDefaultAsync();
+
+            var nodeIds = app.Nodes.Select(n => n.Id).ToList();
+
+            DateTime startDateTime = DateTime.Today.AddDays(-30);
+            DateTime endDateTime = DateTime.Today.AddDays(30).AddTicks(-1);
+
+            var a = await nodeTransitionRepository.GetAll().OrderByDescending(nt => nt.OccurredOn)
+                .Where(nt => (nodeIds.Contains(nt.NodeFromId) || nodeIds.Contains(nt.NodeToId)) && nt.OccurredOn > startDateTime && nt.OccurredOn < endDateTime)
+                .ToListAsync();
+
+            var counts = a.GroupBy(nt => nt.OccurredOn.Month).Take(2).Select(g => g.Count()).ToList();
+
+            var thisMonthCount = (decimal)counts.FirstOrDefault();
+            var prevMonthCount = (decimal)counts.LastOrDefault();
+
+            decimal percentage = 0;
+
+            if (prevMonthCount == 0)
+            {
+                if (thisMonthCount != 0)
+                    percentage = 100;
+            }
+            else
+                percentage = ((thisMonthCount - prevMonthCount) / prevMonthCount) * 100;
+
+            var response = new CountPercentageDto
+            {
+                Count = (int)thisMonthCount,
+                Percentage = percentage
+            };
+
+            return response;
+        }
+        public async Task<CountPercentageDto> GetTotalRequestsAsync(string token)
+        {
+            var appId = portalSessionService.GetConsumerApplicationId(token);
+
+            var app = await consumerApplicationRepository.GetAll().Where(ca => ca.Id == appId).Include(ca => ca.Nodes).FirstOrDefaultAsync();
+
+            var nodeIds = app.Nodes.Select(n => n.Id).ToList();
+
+            var count = await nodeTransitionRepository.GetAll().OrderByDescending(nt => nt.OccurredOn)
+                .Where(nt => (nodeIds.Contains(nt.NodeFromId) || nodeIds.Contains(nt.NodeToId)))
+                .CountAsync();
+
+            var response = new CountPercentageDto
+            {
+                Count = count,
+                Percentage = null
             };
 
             return response;

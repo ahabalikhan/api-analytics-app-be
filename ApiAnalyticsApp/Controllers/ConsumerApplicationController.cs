@@ -16,15 +16,35 @@ namespace ApiAnalyticsApp.Controllers
     public class ConsumerApplicationController : ControllerBase
     {
         private readonly IConsumerApplicationService consumerApplicationService;
-        public ConsumerApplicationController(IConsumerApplicationService consumerApplicationService)
+        private readonly IPortalSessionService portalSessionService;
+        public ConsumerApplicationController(IConsumerApplicationService consumerApplicationService, IPortalSessionService portalSessionService)
         {
             this.consumerApplicationService = consumerApplicationService;
+            this.portalSessionService = portalSessionService;
         }
 
         [HttpPost]
         public async Task<HttpResponseModel<KeysDto>> CreateConsumerApplication(CreateConsumerApplicationRequestDto request)
         {
             var response = await consumerApplicationService.CreateConsumerApplication(request);
+            return response.AsSuccess();
+        }
+        [HttpGet("{token}/todays-requests")]
+        public async Task<HttpResponseModel<CountPercentageDto>> GetTodaysRequests(string token)
+        {
+            var response = await consumerApplicationService.GetTodaysRequestsAsync(token);
+            return response.AsSuccess();
+        }
+        [HttpGet("{token}/months-requests")]
+        public async Task<HttpResponseModel<CountPercentageDto>> GetThisMonthRequests(string token)
+        {
+            var response = await consumerApplicationService.GetThisMonthRequestsAsync(token);
+            return response.AsSuccess();
+        }
+        [HttpGet("{token}/total-requests")]
+        public async Task<HttpResponseModel<CountPercentageDto>> GetTotalRequests(string token)
+        {
+            var response = await consumerApplicationService.GetTotalRequestsAsync(token);
             return response.AsSuccess();
         }
     }

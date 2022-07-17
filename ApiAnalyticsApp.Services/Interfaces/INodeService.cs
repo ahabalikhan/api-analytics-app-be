@@ -8,6 +8,6 @@ namespace ApiAnalyticsApp.Services.Interfaces
 {
     public interface INodeService
     {
-        Task<int> GetNextNode(int consumerApplicationId, NodeTransitionDto request);
+        Task<int> GetNextNode(NodeTransitionDto request);
     }
 }
