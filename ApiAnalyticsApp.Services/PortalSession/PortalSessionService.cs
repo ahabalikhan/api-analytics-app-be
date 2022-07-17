@@ -52,5 +52,17 @@ namespace ApiAnalyticsApp.Services.PortalSession
 
             return token;
         }
+
+        public ConsumerApplication GetConsumerApplication(string token)
+        {
+            var session = portalSessionRepository.GetAll().Where(ps => ps.Token == token && ps.ExpiryDate > DateTime.UtcNow).FirstOrDefault();
+            
+            if (session == null)
+                CustomError.InvalidToken.ThrowCustomErrorException(HttpStatusCode.Unauthorized);
+
+            var consumerApplication = consumerApplicationRepository.GetAll().Where(ca => ca.Id == session.ConsumerApplicationId).FirstOrDefault();
+
+            return consumerApplication;
+        }
     }
 }
