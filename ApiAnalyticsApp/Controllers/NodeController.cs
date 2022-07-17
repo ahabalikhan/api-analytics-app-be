@@ -1,7 +1,4 @@
-﻿using ApiAnalyticsApp.DataAccess.Helpers;
-using ApiAnalyticsApp.DataTransferObjects.Services.Node;
-using ApiAnalyticsApp.DataTransferObjects.Services.PortalSession;
-using ApiAnalyticsApp.Services.Interfaces;
+﻿using ApiAnalyticsApp.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -17,20 +14,12 @@ namespace ApiAnalyticsApp.Controllers
     public class NodeController : ControllerBase
     {
         private readonly INodeService nodeService;
-        private readonly IPortalSessionService portalSessionService;
 
-        public NodeController(INodeService nodeService, IPortalSessionService portalSessionService)
+        public NodeController(INodeService nodeService)
         {
             this.nodeService = nodeService;
-            this.portalSessionService = portalSessionService;
         }
 
-        [HttpPost("transition")]
-        public async Task<HttpResponseModel<int>> GetNextNode(TokenizedRequestDto<NodeTransitionDto> tokenizedRequest)
-        {
-            int consumerApplicationId = portalSessionService.GetConsumerApplication(tokenizedRequest.Token).Id;
-            int response = await nodeService.GetNextNode(consumerApplicationId, tokenizedRequest.Request);
-            return response.AsSuccess();
-        }
+        
     }
 }
