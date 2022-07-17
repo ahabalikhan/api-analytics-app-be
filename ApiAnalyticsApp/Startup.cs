@@ -87,6 +87,14 @@ namespace ApiAnalyticsApp
                 app.ConfigureExceptionHandler();
             }
 
+            app.UseCors(builder =>
+            {
+                builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+            });
+
             app.UseHttpsRedirection();
 
             app.UseSwagger();
