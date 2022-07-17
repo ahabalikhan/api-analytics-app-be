@@ -9,5 +9,6 @@ namespace ApiAnalyticsApp.Services.Interfaces
     public interface INodeService
     {
         Task<int> GetNextNode(NodeTransitionDto request);
+        Task<List<NodeDto>> GetNodeListAsync(string token);
     }
 }

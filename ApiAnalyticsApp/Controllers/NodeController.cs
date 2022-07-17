@@ -17,18 +17,22 @@ namespace ApiAnalyticsApp.Controllers
     public class NodeController : ControllerBase
     {
         private readonly INodeService nodeService;
-        private readonly IPortalSessionService portalSessionService;
 
-        public NodeController(INodeService nodeService, IPortalSessionService portalSessionService)
+        public NodeController(INodeService nodeService)
         {
             this.nodeService = nodeService;
-            this.portalSessionService = portalSessionService;
         }
 
         [HttpPost("transition")]
         public async Task<HttpResponseModel<int>> GetNextNode(NodeTransitionDto tokenizedRequest)
         {
             int response = await nodeService.GetNextNode(tokenizedRequest);
+            return response.AsSuccess();
+        }
+        [HttpGet("{token}")]
+        public async Task<HttpResponseModel<List<NodeDto>>> GetNodeList(string token)
+        {
+            var response = await nodeService.GetNodeListAsync(token);
             return response.AsSuccess();
         }
     }

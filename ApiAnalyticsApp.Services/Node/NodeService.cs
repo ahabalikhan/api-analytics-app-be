@@ -17,10 +17,19 @@ namespace ApiAnalyticsApp.Services.Node
     {
         private readonly AuditableRepository<DataAccess.Models.Node> nodeRepository;
         private readonly AuditableRepository<NodeTransition> nodeTransitionRepository;
-        public NodeService(AuditableRepository<DataAccess.Models.Node> nodeRepository, AuditableRepository<NodeTransition> nodeTransitionRepository)
+        private readonly AuditableRepository<DataAccess.Models.ConsumerApplication> consumerApplicationRepository;
+        private readonly IPortalSessionService portalSessionService;
+        public NodeService(
+            AuditableRepository<DataAccess.Models.Node> nodeRepository, 
+            AuditableRepository<NodeTransition> nodeTransitionRepository,
+            AuditableRepository<DataAccess.Models.ConsumerApplication> consumerApplicationRepository,
+            IPortalSessionService portalSessionService
+            )
         {
             this.nodeRepository = nodeRepository;
             this.nodeTransitionRepository = nodeTransitionRepository;
+            this.consumerApplicationRepository = consumerApplicationRepository;
+            this.portalSessionService = portalSessionService;
         }
         public async Task<int> GetNextNode(NodeTransitionDto request)
         {
@@ -42,6 +51,16 @@ namespace ApiAnalyticsApp.Services.Node
             //To Do: Algorithm
 
             return request.FromNodeId;
+        }
+        public async Task<List<NodeDto>> GetNodeListAsync(string token)
+        {
+            int appId = portalSessionService.GetConsumerApplicationId(token);
+
+            var consumerApp = await consumerApplicationRepository.GetAll().Where(ca => ca.Id == appId).Include(ca => ca.Nodes).FirstOrDefaultAsync();
+
+            var response = consumerApp.Nodes.Select(n => new NodeDto { Id = n.Id, Name = n.Name }).ToList();
+
+            return response;
         }
     }
 }
