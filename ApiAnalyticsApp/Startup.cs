@@ -24,7 +24,7 @@ namespace ApiAnalyticsApp
         {
             Configuration = configuration;
         }
-
+        private const string DevCorsPolicy = nameof(DevCorsPolicy);
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -61,6 +61,12 @@ namespace ApiAnalyticsApp
                 //});
 
             });
+
+            services.AddCors(opt =>
+            opt.AddPolicy(DevCorsPolicy, policy =>
+                policy.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()));
         }
 
         public void ConfigureContainer(ContainerBuilder builder)

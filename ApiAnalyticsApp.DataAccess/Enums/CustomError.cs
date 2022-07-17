@@ -11,6 +11,9 @@ namespace ApiAnalyticsApp.DataAccess.Enums
         InvalidRequest = 10,
 
         [Description("Entity Not Found")]
-        NotFound = 20
+        NotFound = 20,
+
+        [Description("Invalid Token")]
+        InvalidToken = 30
     }
 }
