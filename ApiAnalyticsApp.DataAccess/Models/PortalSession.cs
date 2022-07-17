@@ -5,10 +5,12 @@ using System.Text;
 
 namespace ApiAnalyticsApp.DataAccess.Models
 {
-    public class Node : BaseEntity
+    public class PortalSession : BaseEntity
     {
-        public string Name { get; set; }
         public int ConsumerApplicationId { get; set; }
+        public string Token { get; set; }
+        public DateTime ExpiryDate { get; set; }
+
 
         public ConsumerApplication ConsumerApplication { get; set; }
     }

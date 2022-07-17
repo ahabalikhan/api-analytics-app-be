@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ApiAnalyticsApp.DataAccess\ApiAnalyticsApp.DataAccess.csproj" />
+    <ProjectReference Include="..\ApiAnalyticsApp.DataTransferObjects\ApiAnalyticsApp.DataTransferObjects.csproj" />
   </ItemGroup>
 
 </Project>

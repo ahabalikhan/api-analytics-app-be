@@ -14,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using ApiAnalyticsApp.DataAccess;
 using Autofac;
+using ApiAnalyticsApp.Middlewares;
 
 namespace ApiAnalyticsApp
 {
@@ -23,14 +24,17 @@ namespace ApiAnalyticsApp
         {
             Configuration = configuration;
         }
-
+        private const string DevCorsPolicy = nameof(DevCorsPolicy);
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApiAnalyticsAppDbContext>(op => op.UseSqlServer(Configuration.GetConnectionString("Database")));
-            services.AddControllers();
+            services.AddApiVersioning();
+            object p = services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                );
 
             services.AddSwaggerGen(c =>
             {
@@ -57,6 +61,12 @@ namespace ApiAnalyticsApp
                 //});
 
             });
+
+            services.AddCors(opt =>
+            opt.AddPolicy(DevCorsPolicy, policy =>
+                policy.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()));
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
@@ -71,6 +81,10 @@ namespace ApiAnalyticsApp
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.ConfigureExceptionHandler();
             }
 
             app.UseHttpsRedirection();
