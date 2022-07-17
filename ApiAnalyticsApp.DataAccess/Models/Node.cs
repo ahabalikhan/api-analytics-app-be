@@ -7,9 +7,6 @@ namespace ApiAnalyticsApp.DataAccess.Models
 {
     public class Node : BaseEntity
     {
-        public string Name { get; set; }
         public int ConsumerApplicationId { get; set; }
-
-        public ConsumerApplication ConsumerApplication { get; set; }
     }
 }

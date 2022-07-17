@@ -1,16 +1,13 @@
-﻿using ApiAnalyticsApp.DataAccess.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace ApiAnalyticsApp.DataAccess.Models
 {
-    public class ConsumerApplication : BaseEntity
+    public class ConsumerApplication
     {
-        public string ApplicationKey { get; set; }
-        public string SecretKey { get; set; }
-
-        public List<Node> Nodes { get; set; }
-        public List<PortalSession> PortalSessions { get; set; }
+        public int Id { get; set; }
+        public Guid ApiKey { get; set; }
+        public Guid SecretKey { get; set; }
     }
 }
