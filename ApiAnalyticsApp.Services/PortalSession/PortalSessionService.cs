@@ -32,7 +32,7 @@ namespace ApiAnalyticsApp.Services.PortalSession
         }
         public async Task<string> GetToken(KeysDto request)
         {
-            var consumerApplication = consumerApplicationRepository.GetAll().Where(ca => ca.ApplicationKey.ToString() == request.ApplicationKey && ca.SecretKey.ToString() == request.SecretKey).FirstOrDefault();
+            var consumerApplication = consumerApplicationRepository.GetAll().Where(ca => ca.ApplicationKey == request.ApplicationKey && ca.SecretKey == request.SecretKey).FirstOrDefault();
 
             if (consumerApplication == null)
                 CustomError.NotFound.ThrowCustomErrorException(HttpStatusCode.BadRequest);
@@ -60,8 +60,6 @@ namespace ApiAnalyticsApp.Services.PortalSession
             
             if (session == null)
                 CustomError.InvalidToken.ThrowCustomErrorException(HttpStatusCode.Unauthorized);
-
-            //var consumerApplication = consumerApplicationRepository.GetAll().Where(ca => ca.Id == session.ConsumerApplicationId).FirstOrDefault();
 
             return session.ConsumerApplicationId;
         }
