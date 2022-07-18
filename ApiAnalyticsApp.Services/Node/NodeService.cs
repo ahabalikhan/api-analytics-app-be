@@ -62,7 +62,7 @@ namespace ApiAnalyticsApp.Services.Node
 
             return response;
         }
-        public async Task<GraphDto> GetGraphAsync(string token, DateTime fromDate, DateTime toDate)
+        public async Task<GraphDto> GetGraphAsync(string token)
         {
             int appId = portalSessionService.GetConsumerApplicationId(token);
 
@@ -70,8 +70,11 @@ namespace ApiAnalyticsApp.Services.Node
 
             var nodeIds = nodes.Select(n => n.Id).ToList();
 
+            DateTime now = DateTime.UtcNow;
+            DateTime fromDate = now.Date.AddDays(-(now.Date.Day - 1));
+
             var nodeTransitions = await nodeTransitionRepository.GetAll()
-                .Where(nt => (nodeIds.Contains(nt.NodeFromId) || nodeIds.Contains(nt.NodeToId)) && nt.OccurredOn > fromDate && nt.OccurredOn < toDate)
+                .Where(nt => (nodeIds.Contains(nt.NodeFromId) || nodeIds.Contains(nt.NodeToId)) && nt.OccurredOn > fromDate)
                 .GroupBy(x => new { x.NodeFromId, x.NodeToId })
                 .Select(g => new { g.Key.NodeFromId, g.Key.NodeToId, Count = g.Count() }).ToListAsync();
 

@@ -48,7 +48,7 @@ namespace ApiAnalyticsApp.Controllers
             return response.AsSuccess();
         }
         [HttpGet("{token}/chart")]
-        public async Task<HttpResponseModel<BarChartDto>> GetBarChart(string token)
+        public async Task<HttpResponseModel<BarChartDto>> GetChart(string token)
         {
             var response = await consumerApplicationService.GetChartAsync(token);
             return response.AsSuccess();
