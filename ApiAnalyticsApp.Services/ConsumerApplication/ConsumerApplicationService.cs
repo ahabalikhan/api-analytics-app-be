@@ -1,4 +1,5 @@
-﻿using ApiAnalyticsApp.DataAccess.Enums;
+﻿using ApiAnalyticsApp.Algorithms.PredictionEngineAlgorithm;
+using ApiAnalyticsApp.DataAccess.Enums;
 using ApiAnalyticsApp.DataAccess.Helpers;
 using ApiAnalyticsApp.DataAccess.Models;
 using ApiAnalyticsApp.DataTransferObjects.Services.ConsumerApplication;
@@ -20,14 +21,18 @@ namespace ApiAnalyticsApp.Services.ConsumerApplication
         private readonly AuditableRepository<ConsumerApplication> consumerApplicationRepository;
         private readonly IPortalSessionService portalSessionService;
         private readonly AuditableRepository<NodeTransition> nodeTransitionRepository;
+        private readonly PredictionEngineService predictionEngineService;
         public ConsumerApplicationService(
             AuditableRepository<ConsumerApplication> consumerApplicationRepository, 
             IPortalSessionService portalSessionService,
-            AuditableRepository<NodeTransition> nodeTransitionRepository)
+            AuditableRepository<NodeTransition> nodeTransitionRepository,
+            PredictionEngineService predictionEngineService
+            )
         {
             this.consumerApplicationRepository = consumerApplicationRepository;
             this.portalSessionService = portalSessionService;
             this.nodeTransitionRepository = nodeTransitionRepository;
+            this.predictionEngineService = predictionEngineService;
         }
         public async Task<KeysDto> CreateConsumerApplication(CreateConsumerApplicationRequestDto request)
         {
@@ -154,6 +159,17 @@ namespace ApiAnalyticsApp.Services.ConsumerApplication
                 Count = count,
                 Percentage = null
             };
+
+            return response;
+        }
+        public async Task<CountPercentageDto> GetPredictionsAsync(string token)
+        {
+            int appId = portalSessionService.GetConsumerApplicationId(token);
+
+            var app = await consumerApplicationRepository.GetAll().Where(ca => ca.Id == appId).Include(ca => ca.Nodes).FirstOrDefaultAsync();
+            var nodeIds = app.Nodes.Select(n => n.Id).ToList();
+
+            var response = await predictionEngineService.GetPredictionAccuracyAsync(nodeIds);
 
             return response;
         }

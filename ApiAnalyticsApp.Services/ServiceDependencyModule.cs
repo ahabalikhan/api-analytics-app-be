@@ -1,4 +1,5 @@
-﻿using ApiAnalyticsApp.DataAccess.Helpers;
+﻿using ApiAnalyticsApp.Algorithms.PredictionEngineAlgorithm;
+using ApiAnalyticsApp.DataAccess.Helpers;
 using ApiAnalyticsApp.Services.ConsumerApplication;
 using ApiAnalyticsApp.Services.Interfaces;
 using ApiAnalyticsApp.Services.Node;
@@ -24,6 +25,8 @@ namespace ApiAnalyticsApp.Services
             builder.RegisterType<NodeService>().As<INodeService>().InstancePerLifetimeScope();
             builder.RegisterType<ConsumerApplicationService>().As<IConsumerApplicationService>().InstancePerLifetimeScope();
             builder.RegisterType<PortalSessionService>().As<IPortalSessionService>().InstancePerLifetimeScope();
+
+            builder.RegisterType<PredictionEngineService>().AsSelf().InstancePerLifetimeScope();
         }
     }
 }

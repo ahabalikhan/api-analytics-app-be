@@ -47,6 +47,12 @@ namespace ApiAnalyticsApp.Controllers
             var response = await consumerApplicationService.GetTotalRequestsAsync(token);
             return response.AsSuccess();
         }
+        [HttpGet("{token}/predictions")]
+        public async Task<HttpResponseModel<CountPercentageDto>> GetPredictions(string token)
+        {
+            var response = await consumerApplicationService.GetPredictionsAsync(token);
+            return response.AsSuccess();
+        }
         [HttpGet("{token}/chart")]
         public async Task<HttpResponseModel<BarChartDto>> GetChart(string token)
         {

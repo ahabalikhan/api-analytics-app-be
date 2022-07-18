@@ -1,4 +1,5 @@
-﻿using ApiAnalyticsApp.DataAccess.Enums;
+﻿using ApiAnalyticsApp.Algorithms.PredictionEngineAlgorithm;
+using ApiAnalyticsApp.DataAccess.Enums;
 using ApiAnalyticsApp.DataAccess.Helpers;
 using ApiAnalyticsApp.DataAccess.Models;
 using ApiAnalyticsApp.DataTransferObjects.Services.Node;
@@ -19,17 +20,20 @@ namespace ApiAnalyticsApp.Services.Node
         private readonly AuditableRepository<NodeTransition> nodeTransitionRepository;
         private readonly AuditableRepository<DataAccess.Models.ConsumerApplication> consumerApplicationRepository;
         private readonly IPortalSessionService portalSessionService;
+        private readonly PredictionEngineService predictionEngineService;
         public NodeService(
             AuditableRepository<DataAccess.Models.Node> nodeRepository, 
             AuditableRepository<NodeTransition> nodeTransitionRepository,
             AuditableRepository<DataAccess.Models.ConsumerApplication> consumerApplicationRepository,
-            IPortalSessionService portalSessionService
+            IPortalSessionService portalSessionService,
+            PredictionEngineService predictionEngineService
             )
         {
             this.nodeRepository = nodeRepository;
             this.nodeTransitionRepository = nodeTransitionRepository;
             this.consumerApplicationRepository = consumerApplicationRepository;
             this.portalSessionService = portalSessionService;
+            this.predictionEngineService = predictionEngineService;
         }
         public async Task<int> GetNextNode(NodeTransitionDto request)
         {
@@ -48,9 +52,9 @@ namespace ApiAnalyticsApp.Services.Node
             nodeTransitionRepository.Insert(newTransition);
             await nodeTransitionRepository.SaveAsync();
 
-            //To Do: Algorithm
+            int predictedNodeId = await predictionEngineService.PredictNextNodeId(request.FromNodeId, request.ToNodeId);
 
-            return request.FromNodeId;
+            return predictedNodeId;
         }
         public async Task<List<NodeDto>> GetNodeListAsync(string token)
         {

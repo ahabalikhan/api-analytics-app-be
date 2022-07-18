@@ -7,7 +7,7 @@ namespace ApiAnalyticsApp.DataAccess.Models
 {
     public class PredictionLog : BaseEntity
     {
-        public int NodeTransitionId { get; set; }
+        public int NodeFromId { get; set; }
         public int PredictedNodeId { get; set; }
         public DateTime PredictedAt { get; set; }
     }
