@@ -12,5 +12,6 @@ namespace ApiAnalyticsApp.Services.Interfaces
         Task<CountPercentageDto> GetTodaysRequestsAsync(string token);
         Task<CountPercentageDto> GetThisMonthRequestsAsync(string token);
         Task<CountPercentageDto> GetTotalRequestsAsync(string token);
+        Task<BarChartDto> GetChartAsync(string token);
     }
 }

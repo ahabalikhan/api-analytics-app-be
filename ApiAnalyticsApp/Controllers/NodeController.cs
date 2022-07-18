@@ -36,9 +36,9 @@ namespace ApiAnalyticsApp.Controllers
             return response.AsSuccess();
         }
         [HttpGet("graph/{token}")]
-        public async Task<HttpResponseModel<GraphDto>> GetGraph(string token)
+        public async Task<HttpResponseModel<GraphDto>> GetGraph(string token, [FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
         {
-            var response = await nodeService.GetGraphAsync(token);
+            var response = await nodeService.GetGraphAsync(token, fromDate, toDate);
             return response.AsSuccess();
         }
     }

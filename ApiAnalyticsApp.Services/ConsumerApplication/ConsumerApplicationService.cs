@@ -157,5 +157,38 @@ namespace ApiAnalyticsApp.Services.ConsumerApplication
 
             return response;
         }
+        public async Task<BarChartDto> GetChartAsync(string token)
+        {
+            int appId = portalSessionService.GetConsumerApplicationId(token);
+
+            var app = await consumerApplicationRepository.GetAll().Where(ca => ca.Id == appId).Include(ca => ca.Nodes).FirstOrDefaultAsync();
+            var nodeIds = app.Nodes.Select(n => n.Id).ToList();
+
+            DateTime startDateTime = DateTime.Today.AddMonths(-8);
+            startDateTime = startDateTime.Date.AddDays(-(startDateTime.Date.Day - 1));
+            DateTime endDateTime = DateTime.Today.AddDays(1).AddTicks(-1);
+
+            var nodeTransitions = await nodeTransitionRepository.GetAll().OrderByDescending(nt => nt.OccurredOn)
+                .Where(nt => (nodeIds.Contains(nt.NodeFromId) || nodeIds.Contains(nt.NodeToId)) && nt.OccurredOn > startDateTime && nt.OccurredOn < endDateTime)
+                .ToListAsync();
+
+            var groups = nodeTransitions.GroupBy(nt => nt.OccurredOn.Month).ToList();
+
+            var counts = new List<int>();
+            var months = new List<string>();
+            for(int i = 0; i < 9; i++)
+            {
+                var date = startDateTime.AddMonths(i);
+                months.Add(date.ToString("MMM"));
+                counts.Add(groups.Where(g => g.FirstOrDefault()?.OccurredOn.Month == date.Month).FirstOrDefault()?.Count() ?? 0);
+            }
+            var response = new BarChartDto
+            {
+                Counts = counts,
+                Months = months
+            };
+
+            return response;
+        }
     }
 }
