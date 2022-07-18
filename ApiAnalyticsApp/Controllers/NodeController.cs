@@ -24,9 +24,9 @@ namespace ApiAnalyticsApp.Controllers
         }
 
         [HttpPost("transition")]
-        public async Task<HttpResponseModel<int>> GetNextNode(NodeTransitionDto tokenizedRequest)
+        public async Task<HttpResponseModel<int>> GetNextNode(NodeTransitionDto request)
         {
-            int response = await nodeService.GetNextNode(tokenizedRequest);
+            int response = await nodeService.GetNextNode(request);
             return response.AsSuccess();
         }
         [HttpGet("{token}")]
