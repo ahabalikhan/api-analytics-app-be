@@ -10,5 +10,6 @@ namespace ApiAnalyticsApp.Services.Interfaces
     {
         Task<int> GetNextNode(NodeTransitionDto request);
         Task<List<NodeDto>> GetNodeListAsync(string token);
+        Task<GraphDto> GetGraphAsync(string token);
     }
 }

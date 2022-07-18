@@ -62,5 +62,30 @@ namespace ApiAnalyticsApp.Services.Node
 
             return response;
         }
+        public async Task<GraphDto> GetGraphAsync(string token)
+        {
+            int appId = portalSessionService.GetConsumerApplicationId(token);
+
+            var nodes = await nodeRepository.GetAll().Where(n => n.ConsumerApplicationId == appId).ToListAsync();
+
+            var nodeIds = nodes.Select(n => n.Id).ToList();
+
+            var nodeTransitions = await nodeTransitionRepository.GetAll().Where(nt => nodeIds.Contains(nt.NodeFromId) || nodeIds.Contains(nt.NodeToId))
+                .GroupBy(x => new { x.NodeFromId, x.NodeToId })
+                .Select(g => new { g.Key.NodeFromId, g.Key.NodeToId, Count = g.Count() }).ToListAsync();
+
+            var response = new GraphDto
+            {
+                Nodes = nodes.Select(n => new GraphNodeDto { Id = n.Name }).ToList(),
+                Links = nodeTransitions.Select(nt => new GraphLinksDto
+                {
+                    Source = nodes.Where(n => n.Id == nt.NodeFromId).FirstOrDefault().Name,
+                    Target = nodes.Where(n => n.Id == nt.NodeToId).FirstOrDefault().Name,
+                    Value = nt.Count
+                }).ToList()
+            };
+
+            return response;
+        }
     }
 }

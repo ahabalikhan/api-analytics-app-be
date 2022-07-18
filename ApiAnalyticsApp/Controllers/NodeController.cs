@@ -35,5 +35,11 @@ namespace ApiAnalyticsApp.Controllers
             var response = await nodeService.GetNodeListAsync(token);
             return response.AsSuccess();
         }
+        [HttpGet("graph/{token}")]
+        public async Task<HttpResponseModel<GraphDto>> GetGraph(string token)
+        {
+            var response = await nodeService.GetGraphAsync(token);
+            return response.AsSuccess();
+        }
     }
 }
