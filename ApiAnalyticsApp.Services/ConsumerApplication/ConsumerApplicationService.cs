@@ -98,7 +98,7 @@ namespace ApiAnalyticsApp.Services.ConsumerApplication
             var response = new CountPercentageDto
             {
                 Count = (int)todayCount,
-                Percentage = percentage
+                Percentage = decimal.Round(percentage,2)
             };
 
             return response;
@@ -137,7 +137,7 @@ namespace ApiAnalyticsApp.Services.ConsumerApplication
             var response = new CountPercentageDto
             {
                 Count = (int)thisMonthCount,
-                Percentage = percentage
+                Percentage = decimal.Round(percentage,2)
             };
 
             return response;

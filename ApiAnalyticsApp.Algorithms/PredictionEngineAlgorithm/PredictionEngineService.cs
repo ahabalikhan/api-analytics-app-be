@@ -63,7 +63,7 @@ namespace ApiAnalyticsApp.Algorithms.PredictionEngineAlgorithm
 
             var response = new CountPercentageDto
             {
-                Percentage = data.Select(d => d.Perc).Average(),
+                Percentage = decimal.Round(data.Select(d => d.Perc).Average(), 2),
                 Count = data.Sum(d => d.Count)
             };
             return response;
