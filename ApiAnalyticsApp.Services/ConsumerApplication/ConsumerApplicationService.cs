@@ -73,17 +73,18 @@ namespace ApiAnalyticsApp.Services.ConsumerApplication
 
             var nodeIds = app.Nodes.Select(n => n.Id).ToList();
 
-            DateTime startDateTime = DateTime.Today.AddDays(-1);
-            DateTime endDateTime = DateTime.Today.AddDays(1).AddTicks(-1);
+            DateTime now = DateTime.UtcNow;
+            DateTime startDateTime = now.Date.AddMinutes(-(now.Date.Minute - 1)).AddDays(-1);
+            DateTime endDateTime = startDateTime.AddMonths(2).AddTicks(-1);
 
             var a = await nodeTransitionRepository.GetAll().OrderByDescending(nt => nt.OccurredOn)
                 .Where(nt => (nodeIds.Contains(nt.NodeFromId) || nodeIds.Contains(nt.NodeToId)) && nt.OccurredOn > startDateTime && nt.OccurredOn < endDateTime)
                 .ToListAsync();
 
-            var counts = a.GroupBy(nt => nt.OccurredOn.DayOfWeek).Take(2).Select(g => g.Count()).ToList();
+            var counts = a.GroupBy(nt => nt.OccurredOn.DayOfWeek);
 
-            var todayCount = (decimal)counts.FirstOrDefault();
-            var yesterdayCount = (decimal)counts.LastOrDefault();
+            var todayCount = (decimal)(counts.Where(g => g.Key == endDateTime.DayOfWeek).FirstOrDefault()?.Count() ?? 0);
+            var yesterdayCount = (decimal)(counts.Where(g => g.Key == startDateTime.DayOfWeek).FirstOrDefault()?.Count() ?? 0);
 
             decimal percentage = 0;
 
@@ -112,17 +113,18 @@ namespace ApiAnalyticsApp.Services.ConsumerApplication
 
             var nodeIds = app.Nodes.Select(n => n.Id).ToList();
 
-            DateTime startDateTime = DateTime.Today.AddDays(-30);
-            DateTime endDateTime = DateTime.Today.AddDays(30).AddTicks(-1);
+            DateTime now = DateTime.UtcNow;
+            DateTime startDateTime = now.Date.AddDays(-(now.Date.Day - 1)).AddMonths(-1);
+            DateTime endDateTime = startDateTime.AddMonths(2).AddTicks(-1);
 
             var a = await nodeTransitionRepository.GetAll().OrderByDescending(nt => nt.OccurredOn)
                 .Where(nt => (nodeIds.Contains(nt.NodeFromId) || nodeIds.Contains(nt.NodeToId)) && nt.OccurredOn > startDateTime && nt.OccurredOn < endDateTime)
                 .ToListAsync();
 
-            var counts = a.GroupBy(nt => nt.OccurredOn.Month).Take(2).Select(g => g.Count()).ToList();
+            var counts = a.GroupBy(nt => nt.OccurredOn.Month);
 
-            var thisMonthCount = (decimal)counts.FirstOrDefault();
-            var prevMonthCount = (decimal)counts.LastOrDefault();
+            var thisMonthCount = (decimal)(counts.Where(g => g.Key == endDateTime.Month).FirstOrDefault()?.Count() ?? 0);
+            var prevMonthCount = (decimal)(counts.Where(g => g.Key == startDateTime.Month).FirstOrDefault()?.Count() ?? 0);
 
             decimal percentage = 0;
 
